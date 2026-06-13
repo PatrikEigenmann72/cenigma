@@ -1,0 +1,61 @@
+#!/bin/bash
+# ----------------------------------------------------------------------------------------
+# Script:       readme
+# Description:  Regenerates README.md with About, Author, and a live file tree.
+# ----------------------------------------------------------------------------------------
+# Author:       Patrik Eigenmann
+# eMail:        p.eigenmann72@gmail.com
+# GitHub:       https://github.com/PatrikEigenmann72
+# ----------------------------------------------------------------------------------------
+# Change log:
+# Mon 2026-04-13 File created.                                              Version: 00.01
+# Tue 2026-04-14 Added the About and Author part.                           Version: 00.02
+# Wed 2026-04-15 First attempt to produce a live tree of the active d.      Version: 00.03
+# Thu 2026-04-16 Second attempt to produce a live tree of the directory.    Version: 00.04
+# Sun 2026-04-19 Decided to write a tree clone, because MacOS doesn't ship
+#                with the UNIX tree tool organically. And I don't like homebrew,
+#                so I homebrewed myself -> happy having some C skills.      Version: 00.05
+# Wed 2026-04-22 Fixing a bug, display issues and heredoc issues.           Version: 00.06
+# Sat 2026-05-02 Dynamic content management for About/Why per project.      Version: 00.07
+# Sat 2026-05-02 Changed absolut path to print the working directory. $PWD. Version: 00.08
+# ----------------------------------------------------------------------------------------
+PROJECT=$(basename "$PWD")
+TODAY=$(date +"%a %Y-%m-%d")
+
+TREE=$(treeclone)
+
+cat > README.md <<EOF
+# $PROJECT
+
+EOF
+
+# Insert project‑specific text
+cat $PWD/resources/txt/project.txt >> README.md
+
+cat >> README.md <<EOF
+
+## Folder Structure
+
+The folders with binaries like executables, *.class - files, *.dll's will not be tracked.
+
+EOF
+
+# append the tree output literally
+echo '```' >> README.md
+echo "$TREE" >> README.md
+echo '```' >> README.md
+
+cat >> README.md <<EOF
+
+## Author
+
+My name is Patrik Eigenmann. I learned to code when I was eight years old, long before it became my profession. Later I spent nine years as a software engineer, writing code because it was my job. When I moved into live sound, that obligation disappeared — but the curiosity stayed. I still write software because I want to understand things, not because someone assigns me a task. Coding keeps me sharp, and it gives me the freedom to explore ideas on my own terms.
+I work on projects in my spare time, usually because something catches my interest or I want to figure out how something works under the hood. Nothing I build is backed by a team or a company. It’s just me, learning and creating because I enjoy it.
+If you want to support my work, you can send a donation to p.eigenmann@gmx.net via PayPal. It’s optional, but appreciated.
+Everything I publish is free under the GNU Public License v3.0. Use it, modify it, break it, rebuild it — whatever helps you learn or solve your own problems.
+
+## Last Updated
+$TODAY
+EOF
+
+echo "README.md regenerated successfully."
