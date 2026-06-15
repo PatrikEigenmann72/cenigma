@@ -1,0 +1,25 @@
+Hello dear reader,
+
+This is a test of my new CLI tool, enigma, which encrypts (-e) and decrypts (-d) text or
+files. The project is inspired by the Enigma machine used in Nazi Germany from the 1920s
+to the 1940s.
+
+Cryptography has always fascinated me, and understanding Enigma is almost unavoidable in
+that field. As I researched and implemented the mechanics, the project became more than
+technical -  it became personal.
+
+Alan Turing's story affected me deeply. Despite his brilliance and his role in breaking
+Enigma, he was persecuted under discriminatory British laws criminalizing homosexuality.
+He was chemically castrated and later died in circumstances widely believed to be suicide.
+It is tragic that even today, despite our technological progress, we still struggle with
+basic humanity.
+
+My enigma engine is not a replica but an homage - a reminder of the price that brilliance
+often carries. I also included a reference to the Club 27, honoring artists whose
+extraordinary talent ended too soon.
+
+Let's ensure that people like Alan Turing, Jimi Hendrix, Amy Winehouse, and Kurt Cobain
+are remembered for their contributions, not judged for their identities.
+
+Cheers,
+Patrik Eigenmann
