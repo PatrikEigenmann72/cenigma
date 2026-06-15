@@ -2,7 +2,21 @@
 
 ## About
 
-HISTORY AND CONTEXT
+### Usage
+
+```
+# Encryption of the the text "Hello Cryptography World!" and safe it in 'hello.eng'.
+# File ending is completely up to you, there is no regulations if cipher text has
+# to be in a file with a certain ending.
+enigma -e "Hello Cryptography World!" > hello.eng
+
+# Decryption of the file 'hello.eng' and safe it in hello.txt. Also here,
+# there are no regulations that plaintext has to be in txt file. It is just
+# common practice.
+enigma -d hello.eng > hello.txt
+```
+
+### History and Context
 
 This project implements a modern, software‑based interpretation of the Enigma machine — a cipher device developed and used in the early to mid‑20th century to protect commercial, diplomatic, and military communication. Enigma was deployed extensively by Nazi Germany during World War II, where it was trusted to secure the most sensitive and top‑secret messages.
 
@@ -25,11 +39,11 @@ Turing’s fate is not an isolated historical footnote. It is a reminder that so
 
 This project is my small way of acknowledging that history, honoring the people who shaped it, and refusing to let the human cost be forgotten.
 
-PERSONAL TOUCH
+### Personal Touch
 
 Every rotor in this engine contains a subtle imprint: at positions 27 and 28, the initials of musicians from the “Club 27.” It’s a quiet tribute to artists whose brilliance burned intensely and briefly — another reminder of how fragile human lives are, and how often extraordinary people are lost too soon.
 
-WHAT THIS TOOL IS
+### What this tool is
 
 Yes, it is a cipher engine.
 Yes, it encrypts and decrypts text and files.
@@ -88,9 +102,7 @@ enigma/
 ├── .gitignore
 ├── LICENSE
 ├── README.md
-├── enigma.pmake
-├── hello.cfg
-└── hello.txt
+└── enigma.pmake
 ```
 
 ## Author
@@ -101,4 +113,4 @@ If you want to support my work, you can send a donation to p.eigenmann@gmx.net v
 Everything I publish is free under the GNU Public License v3.0. Use it, modify it, break it, rebuild it — whatever helps you learn or solve your own problems.
 
 ## Last Updated
-Fri 2026-06-12
+Sun 2026-06-14
