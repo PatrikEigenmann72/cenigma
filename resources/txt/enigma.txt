@@ -8,7 +8,7 @@
 Usage:
 ------
 enigma [ -e "plaintext" | filename ]
-enigma [ -d "cyphertext" | filename ]
+enigma [ -d "ciphertext" | filename ]
 enigma [-h | -H | -help | -Help | "-(\)?"]
 
 History and Context
