@@ -20,6 +20,7 @@
 // Mon 2026-06-01 File created.                                                 Version: 00.01
 // Thu 2026-06-11 Added CLI functionality -e & -d.                              Version: 00.02
 // Thu 2026-06-11 Added Manpage functionality.                                  Version: 00.03
+// Sun 2026-06-14 Added debug and log outputs.                                  Version: 00.04
 // -------------------------------------------------------------------------------------------
 
 // Standard Library Includes
@@ -49,24 +50,50 @@
  */
 int main(int argc, char **argv) {
 
+    log_init(LOG_ALL);
+
     const char *mode  = argv[1];
     const char *input = argv[2];
 
+    debug_info("The %d command arguments are %s & %s", (argc - 1), mode, input);
+    log_info("The %d command arguments are %s & %s", (argc - 1), mode, input);
     // ───────────────────────────────────────────────
     // 1. ENCRYPTION MODE (-e*)
     // ───────────────────────────────────────────────
     if (mode && strncmp(mode, "-e", 2) == 0) {
 
+        debug_info("Entering the encryption routine.");
+        log_info("Entering the encryption routine.");
+
+
         char output[65536];
         output[0] = '\0';
+        debug_info("Allocating the output string and set it to '\\0'.");
+        log_info("Allocating the output string and set it to '\\0'.");
 
         if (is_file(input)) {
+            debug_info("Input is a file.");
+            log_info("Input is a file.");
+            
             enigma_encrypt_file(input, output);
+
+            debug_info("Encryption of %s complete.", input);
+            log_info("Encryption of %s complete.", input);
         } else {
+            debug_info("Input is plaintext.");
+            log_info("Input is plaintext.");
+            
             enigma_encrypt_string(input, output);
+
+            debug_info("Encryption of plaintext complete.");
+            log_info("Encryption of plaintext complete.");
         }
 
         printf("%s", output);
+
+        debug_info("Output the encrypted text.");
+        log_info("Output the encrypted text.");
+
         return EXIT_SUCCESS;
     }
 
@@ -75,16 +102,38 @@ int main(int argc, char **argv) {
     // ───────────────────────────────────────────────
     if (mode && strncmp(mode, "-d", 2) == 0) {
 
+        debug_info("Entering the decryption routine.");
+        log_info("Entering the decryption routine.");
+
         char output[65536];
         output[0] = '\0';
 
+        debug_info("Allocating the output string and set it to '\\0'.");
+        log_info("Allocating the output string and set it to '\\0'.");
+
         if (is_file(input)) {
+            debug_info("Input is a file.");
+            log_info("Input is a file.");
+
             enigma_decrypt_file(input, output);
+
+            debug_info("Decryption of %s complete.", input);
+            log_info("Decryption of %s complete.", input);
         } else {
+            debug_info("Input is cipher text.");
+            log_info("Input is cipher text.");
+
             enigma_decrypt_string(input, output);
+
+            debug_info("Decryption of cipher text complete.");
+            log_info("Decryption of cipher text complete.");
         }
 
         printf("%s", output);
+
+        debug_info("Output the decrypted text.");
+        log_info("Output the decrypted text.");
+
         return EXIT_SUCCESS;
     }
 

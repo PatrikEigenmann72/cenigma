@@ -78,6 +78,8 @@
 // Wed 2026-06-10 SmallRotor extracted into samael.babel.enigma.c.                  Version: 00.05
 // Wed 2026-06-10 EnigmaEngine extracted into samael.babel.enigma.c.                Version: 00.06
 // Fri 2026-06-12 Manpage functionality implemented.                                Version: 00.07
+// Mon 2026-06-15 Integrated debug & log information.                               Version: 00.08
+// Mon 2026-06-15 Organized code by regions.                                        Version: 00.09
 // ------------------------------------------------------------------------------------------------
 #include <string.h>
 #include <stdio.h>
@@ -92,19 +94,22 @@
 #include "samael.alchemy.stringutility.h"
 #include "samael.alchemy.manpage.h"
 
+#pragma region Application Info
 // ------------------------------------------------------------
 // Identity constants (private to enigma)
 // ------------------------------------------------------------
 #define APP_NAME    "enigma"
 #define MAJOR       0
-#define MINOR       7
+#define MINOR       9
 
 #define AUTHOR      "Patrik Eigenmann"
 #define EMAIL       "p.eigenmann72@gmail.com"
 #define GIT         "https://www.github.com/PatrikEigenmann72/pmake.git"
 #define LICENSE     "GNU GPL 3.0"
 #define BUILD_DATE  __DATE__
+#pragma endregion
 
+#pragma region Enigma functions
 /**
  * Encrypting a string using the Enigma engine. This function takes an input string and processes
  * each character through the encryption mechanism of the Enigma engine, producing an encrypted
@@ -114,8 +119,16 @@
  * @param output The buffer to store the encrypted string.
  */
 void enigma_encrypt_string(const char *input, char *output) {
+    debug_info("Allocate the enigma engine.");
+    log_info("Allocate the enigma engine.");
     EnigmaEngine eng;
+    
+    debug_info("Initialize the enigma engine.");
+    log_info("Initialize the enigma engine.");
     enigma_init(&eng);
+    
+    debug_info("Encrypt the input string to a cipher.");
+    log_info("Encrypt the input string to a cipher.");
     enigma_encrypt(&eng, input, output);
 }
 
@@ -128,8 +141,16 @@ void enigma_encrypt_string(const char *input, char *output) {
  * @param output The buffer to store the decrypted string.
  */
 void enigma_decrypt_string(const char *input, char *output) {
+    debug_info("Allocate the enigma engine.");
+    log_info("Allocate the enigma engine.");
     EnigmaEngine eng;
+
+    debug_info("Initialize the enigma engine.");
+    log_info("Initialize the enigma engine.");
     enigma_init(&eng);
+
+    debug_info("Decrypt the input cypher to plaintext.");
+    log_info("Decrypt the input cypher to plaintext.");
     enigma_decrypt(&eng, input, output);
 }
 
@@ -144,12 +165,22 @@ void enigma_decrypt_string(const char *input, char *output) {
  * @param output The buffer to store the encrypted file contents.
  */
 void enigma_encrypt_file(const char *filename, char *output) {
+
+    debug_info("Reading file: %s.", filename);
+    log_info("Reading file: %s.", filename);
     char *buffer = read_file(filename);
+
     if (!buffer) {
+        debug_err("%s is not a file.", filename);
+        log_err("%s is not a file.", filename);
         output[0] = '\0';
         return;
     }
+
     enigma_encrypt_string(buffer, output);
+
+    debug_info("Free up the buffer.");
+    log_info("Free up the buffer.");
     free(buffer);
 }
 
@@ -162,15 +193,26 @@ void enigma_encrypt_file(const char *filename, char *output) {
  * @param output The buffer to store the decrypted file contents.
  */
 void enigma_decrypt_file(const char *filename, char *output) {
+
+    debug_info("Reading file: %s.", filename);
+    log_info("Reading file: %s.", filename);
     char *buffer = read_file(filename);
+    
     if (!buffer) {
+        debug_err("%s is not a file.", filename);
+        log_err("%s is not a file.", filename);
         output[0] = '\0';
         return;
     }
     enigma_decrypt_string(buffer, output);
+
+    debug_info("Free up the buffer.");
+    log_info("Free up the buffer.");
     free(buffer);
 }
+#pragma endregion
 
+#pragma region File functions
 /**
  * Checks if the specified path is a file. This function is used to verify that the provided path
  * points to a valid file before attempting to read from or write to it. This is important
@@ -183,7 +225,11 @@ void enigma_decrypt_file(const char *filename, char *output) {
  * @return 1 if the path is a file, 0 otherwise.
  */
 int is_file(const char *path) {
+
     struct stat st;
+
+    debug_info("Check %s.", path);
+    log_info("Check %s.", path);
     return stat(path, &st) == 0 && S_ISREG(st.st_mode);
 }
 
@@ -195,6 +241,10 @@ int is_file(const char *path) {
  * @return A pointer to a newly allocated buffer containing the file contents, or NULL on failure.
  */
 char *read_file(const char *path) {
+
+    debug_info("Read %s.", path);
+    log_info("Read %s.", path);
+
     FILE *f = fopen(path, "rb");
     if (!f) return NULL;
 
@@ -204,6 +254,8 @@ char *read_file(const char *path) {
 
     char *buf = malloc(size + 1);
     if (!buf) {
+        debug_err("File empty!");
+        log_err("File empty!");
         fclose(f);
         return NULL;
     }
@@ -214,7 +266,9 @@ char *read_file(const char *path) {
     fclose(f);
     return buf;
 }
+#pragma endregion
 
+#pragma region Manpage function
 /**
  * manpage_display - Builds and displays the application's integrated manpage. This function
  * assembles all sections—name, synopsis, description, options, and license—into a complete help
@@ -246,7 +300,7 @@ void manpage_display() {
     debug_info("Setting application name to NULL.");
 
     append_format(&name, APP_NAME);
-    log_verbose("Appended application name: %s.", name);
+    log_info("Appended application name: %s.", name);
     debug_info("Appended application name: %s.", name);
 
     char *synopsis = NULL;
@@ -324,7 +378,7 @@ void manpage_display() {
     append_format(&options, "            enigma -e \"Hello\" > secret.txt\n");
     append_format(&options, "            enigma -d secret.txt >> log.txt\n");
     append_format(&options, "\n");
-    append_format(&options, "      -h, -H, -help, -Help, -(\\)?\n");
+    append_format(&options, "      -h, -H, -help, -Help, \"-(\\)?\"\n");
     append_format(&options, "         Do you need help? Any of these flags will open the application's \n");
     append_format(&options, "         manpage. This UNIX-style help file, familiar to developers and \n");
     append_format(&options, "         system administrators, is integrated into enigma itself. The \n");
@@ -371,3 +425,4 @@ void manpage_display() {
     log_info("Freed memory allocated for license.");
     debug_info("Freed memory allocated for license.");
 }
+#pragma endregion
