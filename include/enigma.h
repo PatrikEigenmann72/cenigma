@@ -77,10 +77,12 @@
 // Wed 2026-06-10 Small-, Med-, and LargeRotor extracted to samael.babel.enigma.    Version: 00.04
 // Wed 2026-06-10 EnigmaEngine extracted to samael.babel.enigma.c                   Version: 00.05
 // Thu 2026-06-11 CLI functionality added.                                          Version: 00.06
+// Mon 2026-06-18 Organized file by regions.                                        Version: 00.07
 // ------------------------------------------------------------------------------------------------
 #ifndef ENIGMA_H
 #define ENIGMA_H
 
+#pragma region Cryptographic functions
 /**
  * Encrypting a string using the Enigma engine. This function takes an input string and processes
  * each character through the encryption mechanism of the Enigma engine, producing an encrypted
@@ -124,7 +126,9 @@ void enigma_encrypt_file(const char *filename, char *output);
  * @param output The buffer to store the decrypted file contents.
  */
 void enigma_decrypt_file(const char *filename, char *output);
+#pragma endregion
 
+#pragma region File functions
 /**
  * Checks if the specified path is a file. This function is used to verify that the provided path
  * points to a valid file before attempting to read from or write to it. This is important
@@ -147,7 +151,9 @@ int is_file(const char *path);
  * @return A pointer to a newly allocated buffer containing the file contents, or NULL on failure.
  */
 char *read_file(const char *path);
+#pragma endregion
 
+#pragma region Manpage function
 /**
  * manpage_display - Builds and displays the application's integrated manpage. This function
  * assembles all sections—name, synopsis, description, options, and license—into a complete help
@@ -159,5 +165,6 @@ char *read_file(const char *path);
  * output replaces normal program execution.
  */
 void manpage_display();
+#pragma endregion
 
 #endif
