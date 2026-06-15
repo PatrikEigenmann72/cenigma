@@ -51,11 +51,11 @@ Yes, it is technically functional and practically useful.
 
 But it is also a statement:
 
-•  about history
-•  about injustice
-•  about the cost of brilliance
-•  about the responsibility we carry when we build things
-•  about the need for a more humane future
++ About history
++ About injustice
++ About the cost of brilliance
++ About the Responsibility we carry when we build things
++ About the need for a more humane future
 
 This is not just a tool.
 It is a reflection of why the tool exists.
