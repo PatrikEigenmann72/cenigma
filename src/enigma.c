@@ -308,7 +308,7 @@ void manpage_display() {
     debug_info("Setting synopsis to NULL.");
 
     append_format(&synopsis, "      enigma [ -e \"plaintext\" | filename ]\n");
-    append_format(&synopsis, "      enigma [ -d \"cyphertext\" | filename ]\n");
+    append_format(&synopsis, "      enigma [ -d \"ciphertext\" | filename ]\n");
     append_format(&synopsis, "      enigma [-h | -H | -help | -Help | -(\\)?]\n");
     log_info("Building synopsis: enigma [ -e \"plaintext\" | filename ] [ -d \"cyphertext\" | filename ] [-h | -H | -help | -Help | -(\\)?]");
     debug_info("Building synopsis: enigma [ -e \"plaintext\" | filename ] [ -d \"cyphertext\" | filename ] [-h | -H | -help | -Help | -(\\)?]");
