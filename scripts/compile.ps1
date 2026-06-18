@@ -1,7 +1,7 @@
-# ------------------------------------------------------------------------------------
-# Script:       install.ps1
-# Description:  Installs the already compiled binary from .\bin into ~/bin.
-#               This script does NOT compile the project. Use compile.ps1 first.
+ # ------------------------------------------------------------------------------------
+# Script:       compile.ps1
+# Description:  Compiles the source code.
+#               This script does NOT install the project. Use install.ps1 for that.
 # ------------------------------------------------------------------------------------
 # Author:       Patrik Eigenmann
 # email:        p.eigenmann72@gmail.com
@@ -20,10 +20,10 @@ param(
 function Show-Help {
 @"
 NAME
-    install.ps1 - install the compiled project binary into ~/bin
+    compile.ps1 - compiles the project
 
 SYNOPSIS
-    .\install.ps1 [OPTIONS]
+    .\compile.ps1 [OPTIONS]
 
 DESCRIPTION
     This script takes the active directory as project name and
@@ -34,33 +34,14 @@ OPTIONS
     -h, -help, -?   Show this help menu
 
 EXAMPLES
-    .\install.ps1
+    .\compile.ps1
 "@ | more
-}
-
-# Parse arguments
-if ($Flag -in @("-h", "-help", "-?")) {
-    Show-Help
-    exit
 }
 
 # Extract project name from current directory
 $projectName = Split-Path -Leaf (Get-Location)
 $binary = ".\bin\$projectName"
 
-Write-Host "Installing $projectName..."
+Write-Host "Compiling $projectName..."
 
-# Ensure binary exists
-if (-not (Test-Path $binary)) {
-    Write-Host "Error: Binary '$binary' does not exist."
-    Write-Host "Run '.\compile.ps1' first."
-    exit 1
-}
-
-# Install to ~/bin
-$homeBin = Join-Path $HOME "bin"
-New-Item -ItemType Directory -Force -Path $homeBin | Out-Null
-Copy-Item $binary $homeBin -Force
-
-Write-Host "Installed to $homeBin\$projectName"
-Write-Host "Done. Type '$projectName' to run it."
+gcc -Wall -Wextra -I./include -o $binary src/*.c
