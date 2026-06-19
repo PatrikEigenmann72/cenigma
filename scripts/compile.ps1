@@ -1,7 +1,8 @@
- # ------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------
 # Script:       compile.ps1
-# Description:  Compiles the source code.
-#               This script does NOT install the project. Use install.ps1 for that.
+# Description:  A simple build script for C projects. It calls pmake using the
+#               active directory name as the project name and forwards -DDEBUG
+#               when requested.
 # ------------------------------------------------------------------------------------
 # Author:       Patrik Eigenmann
 # email:        p.eigenmann72@gmail.com
@@ -9,8 +10,8 @@
 # ------------------------------------------------------------------------------------
 # Change Log:
 # Thu 2025-08-14 File created and content added.                        Version: 00.01
-# Thu 2026-04-30 Updated to remove compilation logic.                   Version: 00.02
-# Thu 2026-04-30 Added manpage-style help section.                      Version: 00.03
+# Thu 2026-04-30 Updated to use pmake and unified debug flag.          Version: 00.02
+# Thu 2026-04-30 Added manpage-style help section.                     Version: 00.03
 # ------------------------------------------------------------------------------------
 
 param(
@@ -20,28 +21,42 @@ param(
 function Show-Help {
 @"
 NAME
-    compile.ps1 - compiles the project
+    compile.ps1 - build and prepare project binaries
 
 SYNOPSIS
     .\compile.ps1 [OPTIONS]
 
 DESCRIPTION
     This script takes the active directory as project name and
-    installs the existing binary from .\bin\ into ~/bin.
-    It does NOT compile the project. Use compile.ps1 first.
+    calls pmake to build the project.
 
 OPTIONS
     -h, -help, -?   Show this help menu
+    -DDEBUG         Compile with debug information (forwards -DDEBUG)
 
 EXAMPLES
     .\compile.ps1
+    .\compile.ps1 -DDEBUG
 "@ | more
+}
+
+# Parse arguments
+if ($Flag -in @("-h", "-help", "-?")) {
+    Show-Help
+    exit
 }
 
 # Extract project name from current directory
 $projectName = Split-Path -Leaf (Get-Location)
-$binary = ".\bin\$projectName"
 
-Write-Host "Compiling $projectName..."
+Write-Host "Building $projectName..."
 
-gcc -Wall -Wextra -I./include -o $binary src/*.c
+if ($Flag -eq "-DDEBUG") {
+    Write-Host "Compiling with -DDEBUG flag..."
+    pmake $projectName -DDEBUG
+} else {
+    Write-Host "Compiling for RELEASE..."
+    pmake $projectName
+}
+
+Write-Host "Done. Type 'bin\$projectName' to begin."

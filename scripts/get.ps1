@@ -1,66 +1,101 @@
-# ------------------------------------------------------------------------------------
-# Script:       install.ps1
-# Description:  Installs the already compiled binary from .\bin into ~/bin.
-#               This script does NOT compile the project. Use compile.ps1 first.
-# ------------------------------------------------------------------------------------
+#!/usr/bin/env pwsh
+# ----------------------------------------------------------------------------------------
+# Script:       get.ps1
+# Description:  Fetches components from the template project into the active project.
+#               Supports C source/header files and script families (.sh/.ps1/.bat).
+#               Used to pull new or updated components intentionally and explicitly.
+# ----------------------------------------------------------------------------------------
 # Author:       Patrik Eigenmann
-# email:        p.eigenmann72@gmail.com
-# GitHub:       https://github.com/PatrikEigenmann72/Scripts
-# ------------------------------------------------------------------------------------
+# eMail:        p.eigenmann72@gmail.com
+# GitHub:       https://github.com/PatrikEigenmann72/scripts.git
+# ----------------------------------------------------------------------------------------
 # Change Log:
-# Thu 2025-08-14 File created and content added.                        Version: 00.01
-# Thu 2026-04-30 Updated to remove compilation logic.                   Version: 00.02
-# Thu 2026-04-30 Added manpage-style help section.                      Version: 00.03
-# ------------------------------------------------------------------------------------
+# Fri 2024-06-04 Script created.                                           Version: 00.01
+# Fri 2026-05-01 Script header added and script-family logic integrated.   Version: 00.02
+# Thu 2026-06-18 Changed to soft path.					                   Version: 00.03
+# ----------------------------------------------------------------------------------------
 
 param(
-    [string]$Flag
+    [Parameter(Mandatory=$true)]
+    [string]$Component
 )
 
-function Show-Help {
-@"
-NAME
-    install.ps1 - install the compiled project binary into ~/bin
+$Template = "../helloc"
+$DestSrc  = "src"
+$DestInc  = "include"
+$DestScr  = "scripts"
 
-SYNOPSIS
-    .\install.ps1 [OPTIONS]
+function Copy-ScriptFamily {
+    param([string]$Base)
 
-DESCRIPTION
-    This script takes the active directory as project name and
-    installs the existing binary from .\bin\ into ~/bin.
-    It does NOT compile the project. Use compile.ps1 first.
-
-OPTIONS
-    -h, -help, -?   Show this help menu
-
-EXAMPLES
-    .\install.ps1
-"@ | more
+    foreach ($ext in @("sh", "ps1", "bat", "cmd")) {
+        $src = "$Template/$DestScr/$Base.$ext"
+        if (Test-Path $src) {
+            if (-not (Test-Path $DestScr)) { New-Item -ItemType Directory -Path $DestScr | Out-Null }
+            Copy-Item $src $DestScr
+            Write-Host "Copied $Base.$ext to $DestScr/"
+        }
+    }
 }
 
-# Parse arguments
-if ($Flag -in @("-h", "-help", "-?")) {
-    Show-Help
-    exit
+switch -regex ($Component) {
+
+    ".*\.c$" {
+        $file = Split-Path $Component -Leaf
+        $src = "$Template/$DestSrc/$file"
+        if (Test-Path $src) {
+            if (-not (Test-Path $DestSrc)) { New-Item -ItemType Directory -Path $DestSrc | Out-Null }
+            Copy-Item $src $DestSrc
+            Write-Host "Copied $file to $DestSrc/"
+        } else {
+            Write-Host "Source file not found in template: $file"
+        }
+    }
+
+    ".*\.h$" {
+        $file = Split-Path $Component -Leaf
+        $base = $file -replace "\.h$",""
+        $hdr  = "$Template/$DestInc/$file"
+        $srcC = "$Template/$DestSrc/$base.c"
+
+        if (Test-Path $hdr) {
+            if (-not (Test-Path $DestInc)) { New-Item -ItemType Directory -Path $DestInc | Out-Null }
+            Copy-Item $hdr $DestInc
+            Write-Host "Copied $file to $DestInc/"
+
+            if (Test-Path $srcC) {
+                if (-not (Test-Path $DestSrc)) { New-Item -ItemType Directory -Path $DestSrc | Out-Null }
+                Copy-Item $srcC $DestSrc
+                Write-Host "Copied counterpart $base.c to $DestSrc/"
+            }
+        } else {
+            Write-Host "Header file not found in template: $file"
+        }
+    }
+
+    ".*\.(sh|ps1|bat)$" {
+        $file = Split-Path $Component -Leaf
+        $base = $file -replace "\.[^.]+$",""
+        CopyScriptFamily $base
+    }
+
+    default {
+        $base = $Component
+
+        $srcC = "$Template/$DestSrc/$base.c"
+        if (Test-Path $srcC) {
+            if (-not (Test-Path $DestSrc)) { New-Item -ItemType Directory -Path $DestSrc | Out-Null }
+            Copy-Item $srcC $DestSrc
+            Write-Host "Copied $base.c to $DestSrc/"
+        }
+
+        $hdr = "$Template/$DestInc/$base.h"
+        if (Test-Path $hdr) {
+            if (-not (Test-Path $DestInc)) { New-Item -ItemType Directory -Path $DestInc | Out-Null }
+            Copy-Item $hdr $DestInc
+            Write-Host "Copied $base.h to $DestInc/"
+        }
+
+        CopyScriptFamily $base
+    }
 }
-
-# Extract project name from current directory
-$projectName = Split-Path -Leaf (Get-Location)
-$binary = ".\bin\$projectName"
-
-Write-Host "Installing $projectName..."
-
-# Ensure binary exists
-if (-not (Test-Path $binary)) {
-    Write-Host "Error: Binary '$binary' does not exist."
-    Write-Host "Run '.\compile.ps1' first."
-    exit 1
-}
-
-# Install to ~/bin
-$homeBin = Join-Path $HOME "bin"
-New-Item -ItemType Directory -Force -Path $homeBin | Out-Null
-Copy-Item $binary $homeBin -Force
-
-Write-Host "Installed to $homeBin\$projectName"
-Write-Host "Done. Type '$projectName' to run it."

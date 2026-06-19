@@ -46,7 +46,7 @@ if ($Flag -in @("-h", "-help", "-?")) {
 
 # Extract project name from current directory
 $projectName = Split-Path -Leaf (Get-Location)
-$binary = ".\bin\$projectName.exe"
+$binary = ".\bin\$projectName"
 
 Write-Host "Installing $projectName..."
 
@@ -58,8 +58,7 @@ if (-not (Test-Path $binary)) {
 }
 
 # Install to ~/bin
-#$homeBin = Join-Path $HOME "bin"
-$homeBin = "D:/bin"
+$homeBin = Join-Path $HOME "bin"
 New-Item -ItemType Directory -Force -Path $homeBin | Out-Null
 Copy-Item $binary $homeBin -Force
 

@@ -1,8 +1,9 @@
 @echo off
 :: ------------------------------------------------------------------------------------
-:: Script:       install.bat
-:: Description:  Installs the already compiled binary from .\bin into %USERPROFILE%\bin.
-::               This script does NOT compile the project. Use compile.bat first.
+:: Script:       compile.bat
+:: Description:  A simple build script for C projects. It calls pmake using the
+::               active directory name as the project name and forwards -DDEBUG
+::               when requested.
 :: ------------------------------------------------------------------------------------
 :: Author:       Patrik Eigenmann
 :: email:        p.eigenmann72@gmail.com
@@ -16,18 +17,14 @@
 set PROJECT=%CD%
 for %%I in ("%PROJECT%") do set PROJECT=%%~nI
 
-set BINARY=bin\%PROJECT%
+echo Building %PROJECT%...
 
-echo Installing %PROJECT%...
-
-if not exist "%BINARY%" (
-    echo Error: Binary "%BINARY%" does not exist.
-    echo Run "compile.bat" first.
-    exit /b 1
+if "%1"=="-DDEBUG" (
+    echo Compiling with -DDEBUG flag...
+    pmake %PROJECT% -DDEBUG
+) else (
+    echo Compiling for RELEASE...
+    pmake %PROJECT%
 )
 
-if not exist "%USERPROFILE%\bin" mkdir "%USERPROFILE%\bin"
-copy "%BINARY%" "%USERPROFILE%\bin" >nul
-
-echo Installed to %USERPROFILE%\bin\%PROJECT%
-echo Done. Type "%PROJECT%" to run it.
+echo Done. Type "bin\%PROJECT%" to begin.
