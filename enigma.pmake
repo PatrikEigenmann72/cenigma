@@ -13,6 +13,7 @@
 # Change Log:
 # Mon 2026-06-01 File created.                                                          Version: 00.01
 # Wed 2026-06-17 Added the no-unknown-pragmas flag to disable warnings.                 Version: 00.02
+# Fri 2026-06-19 Added -lm math library, to avoid Linux trouble.                        Version: 00.03
 # ----------------------------------------------------------------------------------------------------
 
 # The compiler used for compiling the project is essential. Commonly, GCC is employed for Windows
@@ -62,4 +63,4 @@ src=./src/*.c
 # to guarantee successful compilation and linking of the project.
 # libs=-lncurses -lmarkdown -lsamael
 # libs=./src/manpage.c ./src/parse.c ./src/version.c
-libs=
+libs=-lm
