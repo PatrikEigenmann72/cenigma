@@ -21,6 +21,7 @@
 // Thu 2026-06-11 Added CLI functionality -e & -d.                              Version: 00.02
 // Thu 2026-06-11 Added Manpage functionality.                                  Version: 00.03
 // Sun 2026-06-14 Added debug and log outputs.                                  Version: 00.04
+// Sun 2026-06-21 Enable UTF-8 support for windows console.                     Version: 00.05
 // -------------------------------------------------------------------------------------------
 
 // Standard Library Includes
@@ -33,6 +34,7 @@
 #include "samael.babel.enigma.h"                    // My cypher engine "enigma".
 #include "samael.huginandmunin.debug.h"             // Minimalist debugger header.
 #include "samael.huginandmunin.log.h"               // Logging system header.
+#include "samael.alchemy.manpage.h"                 // Manpage system header.
 
 // enigma includes
 #include "enigma.h"
@@ -50,6 +52,7 @@
  */
 int main(int argc, char **argv) {
 
+    setConsoleUTF8(); // Enable UTF-8 support for Windows console.
     log_init(LOG_ALL);
 
     const char *mode  = argv[1];
