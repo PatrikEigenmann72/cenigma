@@ -22,6 +22,7 @@
 // Thu 2026-06-11 Added Manpage functionality.                                  Version: 00.03
 // Sun 2026-06-14 Added debug and log outputs.                                  Version: 00.04
 // Sun 2026-06-21 Enable UTF-8 support for windows console.                     Version: 00.05
+// Sun 2026-06-21 Bugfix: MacOS/Linux needs a "\n" in order to flush.           Version: 00.06
 // -------------------------------------------------------------------------------------------
 
 // Standard Library Includes
@@ -60,6 +61,7 @@ int main(int argc, char **argv) {
 
     debug_info("The %d command arguments are %s & %s", (argc - 1), mode, input);
     log_info("The %d command arguments are %s & %s", (argc - 1), mode, input);
+
     // ───────────────────────────────────────────────
     // 1. ENCRYPTION MODE (-e*)
     // ───────────────────────────────────────────────
@@ -68,9 +70,8 @@ int main(int argc, char **argv) {
         debug_info("Entering the encryption routine.");
         log_info("Entering the encryption routine.");
 
+        char *output = NULL;
 
-        char output[65536];
-        output[0] = '\0';
         debug_info("Allocating the output string and set it to '\\0'.");
         log_info("Allocating the output string and set it to '\\0'.");
 
@@ -92,7 +93,9 @@ int main(int argc, char **argv) {
             log_info("Encryption of plaintext complete.");
         }
 
-        printf("%s", output);
+        // Bugfix: MacOS & Linux need to flush the console else
+        // you see a stray % at the end of the output.
+        printf("%s\n", output);
 
         debug_info("Output the encrypted text.");
         log_info("Output the encrypted text.");
@@ -108,8 +111,7 @@ int main(int argc, char **argv) {
         debug_info("Entering the decryption routine.");
         log_info("Entering the decryption routine.");
 
-        char output[65536];
-        output[0] = '\0';
+        char *output = NULL;
 
         debug_info("Allocating the output string and set it to '\\0'.");
         log_info("Allocating the output string and set it to '\\0'.");
@@ -132,7 +134,9 @@ int main(int argc, char **argv) {
             log_info("Decryption of cipher text complete.");
         }
 
-        printf("%s", output);
+        // Bugfix: MacOS & Linux need to flush the console else
+        // you see a stray % at the end of the output.
+        printf("%s\n", output);
 
         debug_info("Output the decrypted text.");
         log_info("Output the decrypted text.");
